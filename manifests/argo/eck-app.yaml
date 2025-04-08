@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: eck-stack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sagarpatil28dec98/airflow-log-eck-pipeline.git
+    targetRevision: HEAD
+    path: manifests/eck
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: elastic-system
+  syncPolicy:
+    automated: {}

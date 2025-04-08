@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: filebeat
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sagarpatil28dec98/airflow-log-eck-pipeline.git
+    targetRevision: HEAD
+    path: manifests/filebeat
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: logging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
