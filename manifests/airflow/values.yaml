@@ -1,6 +1,48 @@
-executor: LocalExecutor
+executor: "KubernetesExecutor"
+
+airflow:
+  image:
+    repository: apache/airflow
+    tag: "2.8.1"
+  config:
+    AIRFLOW__CORE__FERNET_KEY: "dGVzdF9rZXlfZm9yX2Rldl9vbmx5"  # just a placeholder key
+    AIRFLOW__CORE__LOAD_EXAMPLES: "True"
+    AIRFLOW__KUBERNETES__DELETE_WORKER_PODS: "True"
+
 webserver:
   defaultUser:
     enabled: true
     username: admin
     password: admin
+
+  service:
+    type: ClusterIP
+    port: 8080
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+scheduler:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 300m
+      memory: 512Mi
+
+workers:
+  enabled: false  # not needed for KubernetesExecutor
+
+logs:
+  persistence:
+    enabled: true               # ✅ Enable persistent volume for logs
+    accessMode: ReadWriteMany   # ✅ To allow multiple readers (Filebeat + Airflow)
+    size: 5Gi
+    storageClassName: ""        # Optional: add your default SC if needed
+  path: /opt/airflow/logs       # ✅ Filebeat will mount this to read logs
